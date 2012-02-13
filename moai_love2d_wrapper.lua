@@ -53,7 +53,7 @@ function love.graphics:___render()
       local renderprop = instances[instances.index]
       instances.index = instances.index + 1
 
-      renderprop:setLoc(prop, x-(SCREEN_WIDTH/2), y-(SCREEN_HEIGHT/2))
+      renderprop:setLoc(x-(SCREEN_WIDTH/2), y-(SCREEN_HEIGHT/2))
    end
 end
 

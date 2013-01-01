@@ -11,11 +11,11 @@ function love.load()
 --	music = love.audio.newSource("prondisk.xm")
 	
 	-- The various images used.
-	body = love.graphics.newImage("love2d_pclouds/body.png")
-	ear = love.graphics.newImage("love2d_pclouds/ear.png")
-	face = love.graphics.newImage("love2d_pclouds/face.png")
-	logo = love.graphics.newImage("love2d_pclouds/love.png")
-	cloud = love.graphics.newImage("love2d_pclouds/cloud_plain.png")
+	body = love.graphics.newImage("body.png")
+	ear = love.graphics.newImage("ear.png")
+	face = love.graphics.newImage("face.png")
+	logo = love.graphics.newImage("love.png")
+	cloud = love.graphics.newImage("cloud_plain.png")
 
 	-- Set the background color to soothing pink.
 	love.graphics.setBackgroundColor(0xff, 0xf1, 0xf7)

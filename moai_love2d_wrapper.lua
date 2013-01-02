@@ -1,14 +1,19 @@
 love = {}
 love.graphics = {}
 MOAILove2D = {}
+MOAILove2D.dir = ""
 
 local __prop_instances = {}
 local __gColor = { 1, 1, 1, 1 }
 local __renderlist = {}
 
+function MOAILove2D.convertFilename( filename )
+	return MOAILove2D.dir .. filename
+end
+
 function MOAILove2D.load( filename )	
-	LOVE_DIR = "love2d_pclouds/";
-	require (LOVE_DIR.."main")
+	MOAILove2D.dir = "love2d_pclouds/";
+	require ( MOAILove2D.convertFilename( "main" ) )
 		
 	SCREEN_UNITS_X = 800
 	SCREEN_UNITS_Y = 600
@@ -29,6 +34,10 @@ function MOAILove2D.load( filename )
 	layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
 	MOAISim.pushRenderPass( layer )  
+
+	if MOAIUntzSystem then
+		MOAIUntzSystem.initialize()
+	end
 
 	love.load()
 
@@ -73,7 +82,7 @@ function love.graphics.newImage(file)
    local prop = MOAIProp2D.new ()
 
    prop.texture = MOAITexture.new ()
-   prop.texture:load ( LOVE_DIR..file )
+   prop.texture:load ( MOAILove2D.convertFilename( file ) )
    local xtex, ytex = prop.texture:getSize ()
 
    prop.gfxQuad = MOAIGfxQuad2D.new ()
@@ -142,9 +151,24 @@ function love.graphics.quad() end
 function love.graphics.setFont() end
 function love.graphics.print() end
 
-love.audio = {}
-function love.audio.play() end
-function love.audio.newSource() end
 
+love.audio = {}
+if MOAIUntzSystem then
+	function love.audio.play( loveSnd ) 
+		loveSnd.__untz:play()
+	end
+	function love.audio.newSource( file ) 
+		loveSnd = {}
+		loveSnd.__untz = MOAIUntzSound.new()
+		loveSnd.__untz:load( MOAILove2D.convertFilename( file ) )
+		loveSnd.__untz:setLooping(true)
+		return loveSnd
+	end
+else
+	function love.audio.play() end
+	function love.audio.newSource() end
+end
+	
+	
 love.filesystem = {}
 function love.filesystem.load() end

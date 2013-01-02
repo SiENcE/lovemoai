@@ -14,13 +14,19 @@ end
 function MOAILove2D.load( filename )	
 	MOAILove2D.dir = "love2d_pclouds/";
 	require ( MOAILove2D.convertFilename( "main" ) )
+	require ( MOAILove2D.convertFilename( "conf" ) )
 		
+	config = { title = "moai_love2d_wrapper_test" }
+	if love.conf then 
+		love.conf( config ) 
+	end
+	
 	SCREEN_UNITS_X = 800
 	SCREEN_UNITS_Y = 600
 	SCREEN_WIDTH = SCREEN_UNITS_X
 	SCREEN_HEIGHT = SCREEN_UNITS_Y
 
-	MOAISim.openWindow ( "moai_love2d_wrapper_test", SCREEN_WIDTH, SCREEN_HEIGHT )
+	MOAISim.openWindow ( config.title, SCREEN_WIDTH, SCREEN_HEIGHT )
 	MOAISim.setStep ( 1 / 60 )
 	MOAISim.clearLoopFlags()
 	MOAISim.setLoopFlags ( MOAISim.SIM_LOOP_ALLOW_BOOST )

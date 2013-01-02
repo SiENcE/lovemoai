@@ -13,8 +13,8 @@ end
 
 function MOAILove2D.load( filename )	
 	MOAILove2D.dir = "love2d_pclouds/";
-	require ( MOAILove2D.convertFilename( "main" ) )
 	require ( MOAILove2D.convertFilename( "conf" ) )
+	require ( MOAILove2D.convertFilename( "main" ) )
 		
 	config = { title = "moai_love2d_wrapper_test" }
 	if love.conf then 

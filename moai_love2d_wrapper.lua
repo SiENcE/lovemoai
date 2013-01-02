@@ -1,14 +1,72 @@
 love = {}
 love.graphics = {}
+MOAILove2D = {}
 
 local __prop_instances = {}
+local __gColor = { 1, 1, 1, 1 }
+local __renderlist = {}
+
+function MOAILove2D.load( filename )	
+	LOVE_DIR = "love2d_pclouds/";
+	require (LOVE_DIR.."main")
+		
+	SCREEN_UNITS_X = 800
+	SCREEN_UNITS_Y = 600
+	SCREEN_WIDTH = SCREEN_UNITS_X
+	SCREEN_HEIGHT = SCREEN_UNITS_Y
+
+	MOAISim.openWindow ( "moai_love2d_wrapper_test", SCREEN_WIDTH, SCREEN_HEIGHT )
+	MOAISim.setStep ( 1 / 60 )
+	MOAISim.clearLoopFlags()
+	MOAISim.setLoopFlags ( MOAISim.SIM_LOOP_ALLOW_BOOST )
+	MOAISim.setBoostThreshold ( 0 )
+
+	viewport = MOAIViewport.new ()
+	viewport:setSize ( SCREEN_WIDTH, SCREEN_HEIGHT )
+	viewport:setScale ( SCREEN_UNITS_X, -SCREEN_UNITS_Y )
+	viewport:setOffset( -1, 1 )
+	  
+	layer = MOAILayer2D.new ()
+	layer:setViewport ( viewport )
+	MOAISim.pushRenderPass( layer )  
+
+	love.load()
+
+	--==============================================================
+	-- game loop
+	--==============================================================
+	mainThread = MOAIThread.new ()
+
+	gameOver = false
+
+	mainThread:run ( 
+		function ()
+			local lastTime = MOAISim.getElapsedTime()
+			while not gameOver do
+			  
+				coroutine.yield ()		
+					
+				local curTime = MOAISim.getElapsedTime()
+				local dt = curTime - lastTime;
+				lastTime = curTime;
+				-- call Love2D callbacks
+				love.update( dt )
+				love.graphics:___renderinit()
+				love.draw()
+				love.graphics:___render()
+	--			love.keypressed(k)
+			end				
+		end 
+	)
+end
 
 local function clonePropInstance(prop)
-   local copy = MOAIProp2D.new()
-   copy:setDeck(prop.gfxQuad)
-   layer:insertProp(copy)
-   table.insert(__prop_instances[prop], copy)
-   return copy
+	local copy = MOAIProp2D.new()
+	copy:setDeck(prop.gfxQuad)
+	layer:insertProp(copy)
+	table.insert(__prop_instances[prop], copy)
+	
+	return copy
 end
 
 function love.graphics.newImage(file)
@@ -20,7 +78,8 @@ function love.graphics.newImage(file)
 
    prop.gfxQuad = MOAIGfxQuad2D.new ()
    prop.gfxQuad:setTexture ( prop.texture )
-   prop.gfxQuad:setRect ( 0,ytex,xtex,0 )
+   prop.gfxQuad:setRect ( 0, 0, xtex, ytex )
+   prop.gfxQuad:setUVRect( 0, 0, 1, 1 )
 
    prop:setDeck(prop.gfxQuad )
    layer:insertProp ( prop )
@@ -29,8 +88,6 @@ function love.graphics.newImage(file)
 
    return prop
 end
-
-local __renderlist = {}
 
 function love.graphics:___renderinit()  
   __renderlist = {}
@@ -42,7 +99,7 @@ function love.graphics:___render()
       prop.index = 1
    end
 
-   for i,renderitem in ipairs(__renderlist) do
+   for _,renderitem in ipairs(__renderlist) do
       local prop, x, y, r, sx, sy, ox, oy = unpack(renderitem)
 
       -- get an instance of this prop, creating a new one if all existing ones have been used
@@ -57,11 +114,8 @@ function love.graphics:___render()
       renderprop:setLoc( x, y );
       renderprop:setRot( math.deg(r) );
       
-    renderprop:setColor( unpack( gColor ) )
-    renderprop:setBlendMode( MOAIProp.GL_SRC_ALPHA, MOAIProp.GL_ONE_MINUS_SRC_ALPHA )
-    --renderprop:setBlendMode( MOAIProp.GL_DST_COLOR, MOAIProp.GL_ONE_MINUS_SRC_ALPHA )
-     --unpack( gColor ) );
-      --renderprop:setParent( transform )
+      renderprop:setColor( unpack( __gColor ) )
+      renderprop:setBlendMode( MOAIProp.GL_SRC_ALPHA, MOAIProp.GL_ONE_MINUS_SRC_ALPHA )
    end
 end
 
@@ -79,9 +133,8 @@ function love.graphics.setBackgroundColor( r, g, b )
   MOAIGfxDevice.setClearColor( color( r,g,b ) )
 end
 
-gColor = { 1, 1, 1, 1 }
 function love.graphics.setColor( r,g,b,a) 
-  gColor = { color(r,g,b,a) }
+  __gColor = { color(r,g,b,a) }
 end
 
 function love.graphics.newImageFont() end

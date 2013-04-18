@@ -1,5 +1,8 @@
 love = {}
 love.graphics = {}
+love.mouse = {}
+love.audio = {}
+
 MOAILove2D = {}
 MOAILove2D.dir = ""
 
@@ -12,7 +15,7 @@ function MOAILove2D.convertFilename( filename )
 end
 
 function MOAILove2D.load( filename )	
-	MOAILove2D.dir = "love2d_pclouds/";
+	MOAILove2D.dir = filename;
 	require ( MOAILove2D.convertFilename( "conf" ) )
 	require ( MOAILove2D.convertFilename( "main" ) )
 		
@@ -40,6 +43,11 @@ function MOAILove2D.load( filename )
 	layer = MOAILayer2D.new ()
 	layer:setViewport ( viewport )
 	MOAISim.pushRenderPass( layer )  
+	
+	textbox = MOAITextBox.new ()
+	textbox:setRect ( -150, -230, 150, 230 )
+	textbox:setYFlip ( true )
+	layer:insertProp ( textbox )
 
 	if MOAIUntzSystem then
 		MOAIUntzSystem.initialize()
@@ -130,7 +138,7 @@ function love.graphics:___render()
       renderprop:setRot( math.deg(r) );
       
       renderprop:setColor( unpack( __gColor ) )
-      renderprop:setBlendMode( MOAIProp.GL_SRC_ALPHA, MOAIProp.GL_ONE_MINUS_SRC_ALPHA )
+      renderprop:setBlendMode( MOAIProp2D.GL_SRC_ALPHA, MOAIProp2D.GL_ONE_MINUS_SRC_ALPHA )
    end
 end
 
@@ -152,13 +160,31 @@ function love.graphics.setColor( r,g,b,a)
   __gColor = { color(r,g,b,a) }
 end
 
-function love.graphics.newImageFont() end
+-- FONT rendering
+function love.graphics.newImageFont( fontimage, charcodes)
+	local font = MOAIFont.new ()
+	font:load ( fontimage, charcodes )
+	return font
+end
+
+function love.graphics.setFont( fontset )
+	textbox:setFont ( fontset )
+	textbox:setTextSize ( fontset:getScale ())
+end
+
+function love.graphics.print( text )
+	textbox:setString ( text )
+end
+
 function love.graphics.quad() end
-function love.graphics.setFont() end
-function love.graphics.print() end
+function love.graphics.line() end
+function love.graphics.setBlendMode() end
+function love.graphics.circle() end
 
+function love.mouse.isDown() end
+function love.mouse.getX() end
+function love.mouse.getY() end
 
-love.audio = {}
 if MOAIUntzSystem then
 	function love.audio.play( loveSnd ) 
 		loveSnd.__untz:play()

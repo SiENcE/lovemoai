@@ -1,5 +1,6 @@
 love = {}
 love.graphics = {}
+love.keyboard = {}
 love.mouse = {}
 love.audio = {}
 
@@ -180,6 +181,12 @@ function love.graphics.quad() end
 function love.graphics.line() end
 function love.graphics.setBlendMode() end
 function love.graphics.circle() end
+function love.graphics.setCaption() end
+function love.graphics.rectangle() end
+function love.graphics.newQuad() end
+function love.graphics.drawq() end
+
+function love.keyboard.isDown() end
 
 function love.mouse.isDown() end
 function love.mouse.getX() end
